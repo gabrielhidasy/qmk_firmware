@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _LED_MATRIX_H_
 #define _LED_MATRIX_H_
 
-#include "quantum.h"
-
 //From keyboard
 #include "config_led.h"
 
@@ -77,20 +75,39 @@ typedef struct issi3733_led_s {
     uint8_t scan;               //Key scan code from wiring (set 0xFF if no key)
 } issi3733_led_t;
 
-extern issi3733_driver_t issidrv[ISSI3733_DRIVER_COUNT];
+typedef struct led_disp_s {
+    uint64_t frame;
+    float left;
+    float right;
+    float top;
+    float bottom;
+    float width;
+    float height;
+    float max_distance;
+} led_disp_t;
 
-extern uint8_t gcr_desired;
-extern uint8_t gcr_breathe;
-extern uint8_t gcr_actual;
-extern uint8_t gcr_actual_last;
+uint8_t led_matrix_init(void);
+void rgb_matrix_init_user(void);
 
-void gcr_compute(void);
+#define LED_MODE_NORMAL             0   //Must be 0
+#define LED_MODE_KEYS_ONLY          1
+#define LED_MODE_NON_KEYS_ONLY      2
+#define LED_MODE_INDICATORS_ONLY    3
+#define LED_MODE_MAX_INDEX          LED_MODE_INDICATORS_ONLY   //Must be highest value
 
-void led_matrix_indicators(void);
-
-/*-------------------------  Legacy Lighting Support  ------------------------*/
-
-#ifdef USE_MASSDROP_CONFIGURATOR
+#define LED_SCROLL_HORIZ            0
+#define LED_SCROLL_VERT             1
+#define LED_SCROLL_DIAG             2
+#define LED_SCROLL_DIAG2            3
+#define LED_SCROLL_DIAG3            4
+#define LED_SCROLL_CIRC             5
+#define LED_SCROLL_CENT             6
+#define LED_SCROLL_CENT2            7
+#define LED_SCROLL_SPLIT            8
+#define LED_SCROLL_SPLIT2           9
+#define LED_SCROLL_FUNK1            10
+#define LED_SCROLL_FUNK2            11
+#define LED_SCROLL_MAX_INDEX        12
 
 #define EF_NONE         0x00000000  //No effect
 #define EF_OVER         0x00000001  //Overwrite any previous color information with new
@@ -111,16 +128,14 @@ typedef struct led_setup_s {
   uint8_t end;      //Set to signal end of the setup
 } led_setup_t;
 
-extern const uint8_t led_setups_count;
-extern void *led_setups[];
-
 //LED Extra Instructions
-#define LED_FLAG_NULL                0x00       //Matching and coloring not used (default)
-#define LED_FLAG_MATCH_ID            0x01       //Match on the ID of the LED (set id#'s to desired bit pattern, first LED is id 1)
-#define LED_FLAG_MATCH_LAYER         0x02       //Match on the current active layer (set layer to desired match layer)
-#define LED_FLAG_USE_RGB             0x10       //Use a specific RGB value (set r, g, b to desired output color values)
-#define LED_FLAG_USE_PATTERN         0x20       //Use a specific pattern ID (set pattern_id to desired output pattern)
-#define LED_FLAG_USE_ROTATE_PATTERN  0x40       //Use pattern the user has cycled to manually
+#define LED_FLAG_NULL                0x00
+#define LED_FLAG_MATCH_ID            0x01
+#define LED_FLAG_MATCH_LAYER         0x02
+#define LED_FLAG_USE_RGB             0x10
+#define LED_FLAG_USE_PATTERN         0x20
+#define LED_FLAG_USE_ROTATE_PATTERN  0x40
+#define LED_FLAG_USE_GLITTER         0X80
 
 typedef struct led_instruction_s {
     uint16_t flags; // Bitfield for LED instructions
@@ -136,23 +151,49 @@ typedef struct led_instruction_s {
     uint8_t end;
 } led_instruction_t;
 
-extern led_instruction_t led_instructions[];
+extern issi3733_driver_t issidrv[ISSI3733_DRIVER_COUNT];
 
-extern uint8_t led_animation_breathing;
-extern uint8_t led_animation_id;
-extern float led_animation_speed;
-extern uint8_t led_lighting_mode;
+extern uint8_t gcr_desired;
+extern uint8_t gcr_breathe;
+extern uint8_t gcr_actual;
+extern uint8_t gcr_actual_last;
+
 extern uint8_t led_enabled;
-extern uint8_t led_animation_breathe_cur;
+extern uint8_t led_lighting_mode;
+extern float led_animation_speed;
 extern uint8_t led_animation_direction;
-extern uint8_t breathe_dir;
+extern uint8_t led_animation_orientation;
+extern uint8_t led_animation_breathing;
+extern uint8_t led_animation_breathe_cur;
+extern int8_t breathe_dir;
+extern uint8_t breathe_step;
+extern uint8_t led_animation_glittering;
+extern int16_t led_animation_glitter_cur[];
+extern int8_t glitter_dir[];
+extern uint8_t glitter_step;
+extern uint8_t glitter_smooth;
+extern const uint8_t led_setups_count;
+extern const uint8_t led_instruction_count;
+extern uint8_t led_game_colors;
+extern uint8_t led_instruction_id;
+extern uint8_t led_animation_id;
 
-#define LED_MODE_NORMAL             0   //Must be 0
-#define LED_MODE_KEYS_ONLY          1
-#define LED_MODE_NON_KEYS_ONLY      2
-#define LED_MODE_INDICATORS_ONLY    3
-#define LED_MODE_MAX_INDEX          LED_MODE_INDICATORS_ONLY   //Must be highest value
+extern uint8_t led_default_rotate_pattern[];
 
-#endif // USE_MASSDROP_CONFIGURATOR
+extern void *led_setups[];
+extern void *led_instruction_list[];
+extern void *led_game_instructions_list[];
+
+extern uint32_t layer_state;
+
+extern issi3733_led_t *led_cur;
+extern issi3733_led_t *lede;
+
+void set_led_animation_id(uint8_t);
+
+void led_matrix_run(void);
+void led_matrix_task(void);
+
+void gcr_compute(void);
 
 #endif //_LED_MATRIX_H_
