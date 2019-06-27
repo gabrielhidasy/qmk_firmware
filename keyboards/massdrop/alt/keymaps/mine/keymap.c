@@ -52,17 +52,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LGUI, KC_LALT,                         LT(1, KC_SPC),               KC_RALT, MO(2),   KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
     [1] = LAYOUT(
-        KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, KC_MUTE, \
-        L_T_BR,  L_PSD,   L_BRI,   L_PSI,   _______, _______, _______, _______, KC_HOME, U_T_AGCR, KC_PSCR, KC_SLCK, KC_PAUS, KC_TRNS, KC_END, \
-        L_T_PTD, KC_A,   L_BRD,   L_PTN,   _______, _______, KC_LEFT, KC_DOWN, KC_UP   ,KC_RGHT, KC_INS , _______,          _______, KC_VOLU, \
-        L_T_MD, KC_APP,  KC_A, _______, _______, MD_BOOT, KC_END, TG_NKRO, _______, _______, _______, _______,          KC_PGUP, KC_VOLD, \
+        KC_GRV , KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, KC_MUTE, \
+        _______, KC_MS_BTN2, KC_MS_UP, KC_MS_BTN1,KC_MS_BTN3,_______, _______, _______, KC_HOME, U_T_AGCR, KC_PSCR, KC_SLCK, KC_PAUS, KC_LEAD, KC_END, \
+        _______, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT,_______, _______, KC_LEFT, KC_DOWN, KC_UP   ,KC_RGHT, KC_INS , _______,        _______, KC_VOLU, \
+        _______, KC_APP,  KC_A, _______, _______, MD_BOOT, KC_END, TG_NKRO, _______, _______, _______, _______,          KC_PGUP, KC_VOLD, \
         _______, _______, _______,                            _______,                            _______, _______, KC_HOME, KC_PGDN, KC_END  \
-                 ), // TODO: Move everything that's not treating leds to layer 1
+                 ), // TODO: Move everything that's treating leds to layer 2
     [2] = LAYOUT(
         KC_GRV,   KC_F1,   KC_F2,   KC_F3,   KC_F4,    KC_F5,    KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_TRNS, KC_MUTE, \
         L_T_BR,   L_PSD,   L_BRI,   L_PSI,   KC_TRNS,  KC_TRNS,  KC_TRNS, U_T_AUTO,U_T_AGCR,KC_TRNS, KC_PSCR, KC_SLCK, KC_PAUS, KC_TRNS, KC_END, \
         L_T_GLIT, L_PTP,   L_BRD,   L_PTN,   L_SC_P,   L_T_PTD,  L_SC_N,  L_I_P,   L_I_N,   KC_MYCM, KC_CALC, KC_TRNS,          L_T_GCM, KC_VOLU, \
-        L_GLITSM, L_GLITD, L_T_ONF, L_GLITI, KC_TRNS,  MD_BOOT,  TG_NKRO, KC_TRNS, KC_MPRV, KC_MNXT, KC_MPLY, KC_F18,           KC_F16,  KC_VOLD, \
+        L_GLITSM, L_GLITD, L_T_ONF, L_GLITI, RGB_MODE_KNIGHT,  MD_BOOT,  TG_NKRO, KC_TRNS, KC_MPRV, KC_MNXT, KC_MPLY, KC_F18,           KC_F16,  KC_VOLD, \
         KC_TRNS,  KC_TRNS, KC_TRNS,                              KC_MPLY,                            KC_RCTL, KC_TRNS, KC_F13,  KC_F14,  KC_F15  \
     ),
 };
@@ -71,7 +71,7 @@ const uint16_t PROGMEM fn_actions[] = {
 
 };
 
-/* LEADER_EXTERNS(); // REMEMBER TO ADD A KC_LEAD */
+LEADER_EXTERNS(); // REMEMBER TO ADD A KC_LEAD
 
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
@@ -79,7 +79,7 @@ void matrix_init_user(void) {
 
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
-  /* LEADER_DICTIONARY() {
+   LEADER_DICTIONARY() {
     leading = false;
     leader_end();
 
@@ -92,7 +92,7 @@ void matrix_scan_user(void) {
     SEQ_THREE_KEYS(KC_D, KC_D, KC_G) {
       SEND_STRING("https:/start.duckduckgo.com"SS_TAP(X_ENTER));
     }
-    } */
+    } 
 };
 
 #define MODS_SHIFT  (keyboard_report->mods & MOD_BIT(KC_LSHIFT) || keyboard_report->mods & MOD_BIT(KC_RSHIFT))
