@@ -18,5 +18,5 @@
 #define MOUSEKEY_MAX_SPEED      7
 #define MOUSEKEY_WHEEL_DELAY    0
 #define RETRO_TAPPING
-#define DEBOUNCE 20
+//#define DEBOUNCE 20
 #define DEBOUNCE_DELAY 100

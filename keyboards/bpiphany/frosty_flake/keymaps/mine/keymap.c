@@ -24,7 +24,10 @@ enum taps{
   HAND,
   MEMES,
   COPA,
-  ALLS
+  ALLS,
+  TD_HOME_END,
+  TD_SEMI_DOUBLE,
+  TD_MINUS_ARROW
 };
 
 enum unicode_name {
@@ -48,6 +51,30 @@ enum my_macros {
 
 
 // Tap Dance Definitions
+void dance_minus_arrow(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    tap(KC_MINS);
+  } else {
+    tap(KC_MINS);
+    register_code (KC_RSFT);
+    tap(KC_DOT);
+    unregister_code (KC_RSFT);
+  }
+  reset_tap_dance (state);
+}
+
+void dance_semicol_doublecol(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    tap(KC_SCLN);
+  } else {
+    register_code (KC_RSFT);
+    tap(KC_SCLN);
+    tap(KC_SCLN);
+    unregister_code (KC_RSFT);
+  }
+  reset_tap_dance (state);
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
   // Tap once for CTRL, twice for Caps Lock
   [TD_CTCPS]  = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_CAPS),
@@ -59,7 +86,10 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   [ETC] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(cycleEtc, NULL, NULL, 800),
   //[VEHICLES] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(cycleVehicles, NULL, NULL, 800),
   //[SUPPLEMENT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(cycleSupplement, NULL, NULL, 800),
-  [ALLS] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(cycleAll, NULL, NULL, 800)
+  [ALLS] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(cycleAll, NULL, NULL, 800),
+  [TD_HOME_END] = ACTION_TAP_DANCE_DOUBLE(KC_HOME, KC_END),
+  [TD_MINUS_ARROW] = ACTION_TAP_DANCE_FN(dance_minus_arrow),
+  [TD_SEMI_DOUBLE] = ACTION_TAP_DANCE_FN(dance_semicol_doublecol),
 // Other declarations would go here, separated by commas, if you have them
 };
 
@@ -104,19 +134,19 @@ const uint32_t PROGMEM unicode_map[] = {
  };
 // Layouts
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [0] = LAYOUT(\
-    KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_PSCR, KC_SLCK, KC_PAUS, \
-    KC_GESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_INS, KC_HOME, KC_PGUP, KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS, \
+  [0] = LAYOUT(
+	       KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_PSCR, LT(1, KC_SLCK), KC_PAUS, \
+    KC_GESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, TD(TD_MINUS_ARROW), KC_EQL, KC_BSPC, KC_INS, TD(TD_HOME_END), KC_PGUP, KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS, \
     MT(MOD_LCTL,KC_TAB), KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL, KC_END, KC_PGDN, KC_P7, KC_P8, KC_P9, KC_PPLS, \
-    LT(1,KC_CAPS), KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT,  KC_ENT,     KC_P4, KC_P5, KC_P6, \
+    LT(1,KC_CAPS), KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, TD(TD_SEMI_DOUBLE), KC_QUOT,  KC_ENT,     KC_P4, KC_P5, KC_P6, \
     KC_LSPO,  KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,   KC_RSPC,    KC_UP,    KC_P1, KC_P2, KC_P3, KC_PENT, \
-    TD(TD_CTCPS), KC_LGUI, KC_LALT,       KC_SPC,        KC_RALT, KC_RGUI, KC_APP, MO(2),  KC_LEFT, KC_DOWN, KC_RGHT, KC_P0,   KC_PDOT   \
+    TD(TD_CTCPS), KC_LGUI, KC_LALT,       LT(1,KC_SPC),        KC_RALT, KC_RGUI, KC_APP, MO(2),  KC_LEFT, KC_DOWN, KC_RGHT, KC_P0,   KC_PDOT \
   ),
   [1] = LAYOUT(\
     TD(ALLS), TD(EMOJIS), TD(ANIMAL), TD(ETC), TD(FOODS), KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SLCK, RESET, \
-    KC_GRV, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_MS_BTN3, KC_MS_BTN3, KC_TRNS, KC_A, KC_A, KC_A, KC_A, \
-    KC_RCTRL, KC_MPRV, KC_MPLY, KC_MNXT, LCTL(KC_R), KC_T, KC_CALC, KC_PGUP, KC_HOME, KC_PGDN, KC_P, KC_LBRC, KC_RBRC, KC_LEAD, KC_MS_BTN1, KC_MS_BTN2, KC_TRNS, KC_A, KC_A, KC_A, KC_A, \
-    KC_TRNS, KC_VOLD, KC_VOLU, KC_MUTE, KC_TRNS, KC_TRNS, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+    KC_GRV, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_MS_BTN3, KC_MS_BTN3, KC_VOLU, KC_A, KC_A, KC_A, KC_A, \
+    KC_RCTRL, KC_MS_BTN2, KC_MS_UP, KC_MS_BTN1,KC_MS_BTN3,KC_PGUP, KC_CALC, KC_PGUP, KC_HOME, KC_PGDN, KC_P, KC_LBRC, KC_RBRC, KC_LEAD, KC_MS_BTN1, KC_MS_BTN2, KC_VOLD, KC_A, KC_A, KC_A, KC_A, \
+    KC_TRNS, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT,_______, KC_PGDN, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
     MO(2), KC_APP, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_END, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MS_UP, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MS_LEFT, KC_MS_DOWN, KC_MS_RIGHT, KC_TRNS, KC_TRNS \
   ),
