@@ -1,7 +1,7 @@
 #include QMK_KEYBOARD_H
-//notes:: LSHIFT and RSHIFT are defined in my keymap as space cadet shift
+    //notes:: LSHIFT and RSHIFT are defined in my keymap as space cadet shift
 
-enum alt_keycodes {
+    enum alt_keycodes {
   L_BRI = SAFE_RANGE, //LED Brightness Increase
   DBG_KBD,            //DEBUG Toggle Keyboard Prints
   DBG_MOU,            //DEBUG Toggle Mouse Prints
@@ -54,6 +54,7 @@ void dance_cln(qk_tap_dance_state_t *state, void *user_data) {
     tap(KC_SCLN);
   } else {
     register_code (KC_RSFT);
+    tap(KC_SCLN);
     tap(KC_SCLN);
     unregister_code (KC_RSFT);
   }
