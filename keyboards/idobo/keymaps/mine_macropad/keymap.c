@@ -31,7 +31,6 @@ enum custom_keycodes {
   I3NEXT,
   I3PREV,
   CHROME,
-  FIREFOX,
   EMACS,
   LPAREN,
   RPAREN,
@@ -44,7 +43,9 @@ enum custom_keycodes {
 enum {
   TARGETS = 0,
   OPEN_P,
-  CLOSE_P
+  CLOSE_P,
+  MEGAPARENS,
+  FIREFOX
 };
 
 //Tap Dance Definitions
@@ -76,6 +77,37 @@ void dance_close_paren(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
+void dance_mega_paren(qk_tap_dance_state_t *state, void *user_data) {
+  uint16_t count = (state->count-1)%6;
+  switch(count) {
+    case 0:
+      if (state->count > 2) tap(KC_BSPC);
+      send_string("(");
+      return;
+    case 1:
+      tap(KC_BSPC);
+      send_string(")");
+      return;
+    case 2:
+      tap(KC_BSPC);
+      send_string("{");
+      return;
+    case 3:
+      tap(KC_BSPC);
+      send_string("}");
+      return;
+    case 4:
+      tap(KC_BSPC);
+      send_string("[");
+      return;
+    case 5:
+      tap(KC_BSPC);
+      send_string("]");
+      return;
+  }
+}
+
+
 void dance_targets(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
     case 1:
@@ -90,11 +122,31 @@ void dance_targets(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
+void dance_firefox(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 1:
+      tap(KC_LGUI);
+      _delay_ms(300);
+      SEND_STRING("firefox");
+      tap(KC_ENT);
+      return;
+    case 2:
+      tap(KC_LGUI);
+      _delay_ms(300);
+      send_string("firefox -P Corp");
+      tap(KC_ENT);
+      return;
+  }
+}
+
+
 //All tap dance functions would go here. Only showing this one.
 qk_tap_dance_action_t tap_dance_actions[] = {
   [TARGETS]  = ACTION_TAP_DANCE_FN(dance_targets),
   [OPEN_P]  = ACTION_TAP_DANCE_FN(dance_open_paren),
   [CLOSE_P]  = ACTION_TAP_DANCE_FN(dance_close_paren),
+  [MEGAPARENS]  = ACTION_TAP_DANCE_FN_ADVANCED_TIME(dance_mega_paren, NULL, NULL, 400),
+  [FIREFOX] = ACTION_TAP_DANCE_FN(dance_firefox),
 };
 
 
@@ -156,14 +208,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         tap(KC_LGUI);
         _delay_ms(300);
         SEND_STRING("google-chrome");
-        tap(KC_ENT);
-      } 
-      return false;
-    case FIREFOX:
-      if (record->event.pressed) {
-        tap(KC_LGUI);
-        _delay_ms(300);
-        SEND_STRING("firefox");
         tap(KC_ENT);
       } 
       return false;
@@ -234,15 +278,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       RESET,     KC_Y,    KC_L,    KC_L, KC_DOT,   KC_PGUP, KC_PGDN,  I3NEXT,  KC_PGUP,     KC_MS_BTN1, KC_MS_RIGHT, KC_PPLS, KC_PMNS, KC_BSPC,  KC_PENT, \
       KC_TAB,    KC_Q,    KC_W,    KC_E, KC_COMMA, KC_H,    KC_HOME,  I3PREV,  KC_PGDN,     KC_MS_UP,   KC_MS_DOWN,  KC_P9,   KC_P6,   KC_P3,    KC_PAST, \
       KC_LCTRL,  KC_A,    KC_S,    KC_D, KC_I,     G4D,     TO(_QW2), KC_LGUI, KC_MS_BTN3,  KC_MS_BTN2, KC_MS_LEFT,  KC_P8,   KC_P5,   KC_P2,    KC_PSLS, \
-      KC_LSHIFT, KC_Z,    KC_L,    KC_7, KC_U,     KC_V,    FIREFOX,  CHROME,  EMACS,       PRODACCESS, KC_NUMLOCK,  KC_P7,   KC_P4,   KC_P1,    TD(CLOSE_P), \
-      KC_SPC,    KC_RALT, KC_RALT, KC_9, KC_O,     KC_N,    I3REF,    XKILL,   TD(TARGETS), BLAZEB,     BLAZET,      KC_PDOT, KC_PEQL, KC_COMMA, TD(OPEN_P) \
+      KC_LSHIFT, KC_Z,    KC_L,    KC_7, KC_U,     KC_V,    TD(FIREFOX),  CHROME,  EMACS,       PRODACCESS, KC_NUMLOCK,  KC_P7,   KC_P4,   KC_P1,    KC_P0, \
+      KC_SPC,    KC_RALT, KC_RALT, KC_9, KC_O,     KC_N,    I3REF,    XKILL,   TD(TARGETS), BLAZEB,     BLAZET,      KC_PDOT, KC_PEQL, KC_COMMA, TD(MEGAPARENS) \
 ),
  [_QW2] = LAYOUT_ortho_5x15( /* QWERTY */ \
-      RESET,     KC_Y,    KC_L,    KC_L, KC_DOT,   KC_PGUP, KC_PGDN, I3NEXT,  KC_PGUP,     KC_1, KC_RIGHT, KC_PPLS, KC_PMNS, KC_BSPC,  KC_PENT, \
+      RESET,     KC_Y,    KC_L,    KC_L, KC_DOT,   KC_PGUP, KC_PGDN, I3NEXT,  KC_PGUP,     KC_PENT, KC_RIGHT, KC_PPLS, KC_PMNS, KC_BSPC,  KC_PENT, \
       KC_TAB,    KC_Q,    KC_W,    KC_E, KC_COMMA, KC_H,    KC_HOME, I3PREV,  KC_PGDN,     KC_UP,   KC_DOWN,  KC_P9,   KC_P6,   KC_P3,    KC_PAST, \
-      KC_LCTRL,  KC_A,    KC_S,    KC_D, KC_I,     G4D,     TO(_QW), KC_LGUI, KC_3,        KC_2, KC_LEFT,  KC_P8,   KC_P5,   KC_P2,    KC_PSLS, \
-      KC_LSHIFT, KC_Z,    KC_L,    KC_7, KC_U,     KC_V,    FIREFOX, CHROME,  EMACS,       PRODACCESS, KC_NUMLOCK,  KC_P7,   KC_P4,   KC_P1,    TD(CLOSE_P), \
-      KC_SPC,    KC_RALT, KC_RALT, KC_9, KC_O,     KC_N,    I3REF,   XKILL,   TD(TARGETS), BLAZEB,     BLAZET,      KC_PDOT, KC_PEQL, KC_COMMA, TD(OPEN_P) \
+      KC_LCTRL,  KC_A,    KC_S,    KC_D, KC_I,     G4D,     TO(_QW), KC_LGUI, KC_3,        KC_BSPC, KC_LEFT,  KC_P8,   KC_P5,   KC_P2,    KC_PSLS, \
+      KC_LSHIFT, KC_Z,    KC_L,    KC_7, KC_U,     KC_V,    FIREFOX, CHROME,  EMACS,       PRODACCESS, KC_NUMLOCK,  KC_P7,   KC_P4,   KC_P1,    KC_P0, \
+      KC_SPC,    KC_RALT, KC_RALT, KC_9, KC_O,     KC_N,    I3REF,   XKILL,   TD(TARGETS), BLAZEB,     BLAZET,      KC_PDOT, KC_PEQL, KC_COMMA, TD(MEGAPARENS) \
 ),
  
   
