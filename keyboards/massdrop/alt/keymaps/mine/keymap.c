@@ -495,6 +495,29 @@ led_instruction_t led_instructions_pgb[] = {   //purple, green, and black rainbo
   { .end = 1 }
 };
 
+led_instruction_t led_instructions_rgb[] = {   //red, green, and blue rainbow
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB | LED_FLAG_USE_GLITTER,            .layer = 0, .id2 = 4294967288, .id3 = 511, .r = 0, .g = 0, .b = 255},  //whitish bottom
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB | LED_FLAG_USE_GLITTER,            .layer = 0, .id0 = 335478784,  .id1 = 16770591,   .r = 255, .g = 0,  .b = 0}, //red
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 0, .id0 = 2147483648, .id1 = 487,        .r = 0,   .g = 255, .b = 0},  // ASDFJKL: green
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB | LED_FLAG_USE_GLITTER,            .layer = 0, .id0 = 201326592,                     .r = 0, .g = 0, .b = 255},  // [] bluish
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_NULL ,                                     .layer = 0, .id2 = 262136}, //null off
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN ,                       .layer = 0, .id0 = 32767}, //esc-del top row pattern with no glitter
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN | LED_FLAG_USE_GLITTER, .layer = 0, .id0 = 1610645504, .id1 = 4278196224, .id2 = 4294705159, .id3 = 511},
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 262144, .id1 = 3153920,        .r = 0,   .g = 255, .b = 0}, //green
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 131072, .id1 = 2048,           .r = 10, .g = 5, .b = 255}, //white
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 65536,                         .r = 255, .g = 165, .b = 0},  //orange
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 1048576, .id1 = 8,             .r = 255, .g = 160, .b = 0},  //orange2
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 16384, .id1 = 131072,          .r = 255, .g = 0,   .b = 0},  //red
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 33554432,                      .r = 255, .g = 215, .b = 0},  //yellow
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id0 = 1, .id1 = 8388736, .id2 = 2,   .r = 0,   .g = 10, .b = 255},  //cyan
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id1 = 33554433,                      .r = 2,  .g = 0,  .b = 255},  //dark white/grey
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 1, .id1 = 16778496, .id2 = 5,            .r = 255, .g = 20,  .b = 147},  //pink
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_PATTERN | LED_FLAG_USE_GLITTER,        .layer = 1, .id0 = 2113445888, .id1 = 4258133628, .id2 = 7, .pattern_id = 11}, //null off
+  {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_PATTERN,                               .layer = 1, .id0 = 2147491838, .id1 = 2, .id2 = 4294967288, .id3 = 511, .pattern_id = 2},
+  { .end = 1 }
+};
+
+
 led_instruction_t led_game_instructions_pgb[] = {   //purple
   {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 0, .id0 = 2147614720, .id1 = 3,      .r = 0,   .g = 255, .b = 0},  //WASD green
   {.flags = LED_FLAG_MATCH_LAYER | LED_FLAG_MATCH_ID | LED_FLAG_USE_RGB,                                   .layer = 0, .id1 = 524288,                    .r = 0,   .g = 200, .b = 0},  //M green
@@ -591,6 +614,7 @@ void *led_instruction_list[] = {
   led_instructions_rainmandi,    //2
   led_instructions_pcw,          //3
   led_instructions_pgb,          //4
+  led_instructions_rgb,          //4.5
   led_instructions_gsheets,      //5
   led_instructions_default,      //6
   led_instructions_knight        //7
@@ -609,10 +633,11 @@ void *led_game_instruction_list[] = {
 
 const uint8_t led_instruction_count = sizeof(led_instruction_list) / sizeof(led_instruction_list[0]);
 
-uint8_t led_default_rotate_pattern[8] = {  //each instruction group in led_instruction_list has a default rotate pattern (number is position in led_setups array defined in led_programs.c)
+uint8_t led_default_rotate_pattern[9] = {  //each instruction group in led_instruction_list has a default rotate pattern (number is position in led_setups array defined in led_programs.c)
   4,
   4,
   4,
+  0,
   0,
   3,
   4,
